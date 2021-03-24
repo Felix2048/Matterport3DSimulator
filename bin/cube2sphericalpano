@@ -107,25 +107,57 @@ interplation="bilinear"		#interpolation mode
 PROGNAME=`type $0 | awk '{print $3}'`  # search for executable on path
 PROGDIR=`dirname $PROGNAME`            # extract directory of program
 PROGNAME=`basename $PROGNAME`          # base name of program
+
+usage_msg="
+USAGE: cube2sphericalpano [-d dimensions] [-t tilesize] [-b bgcolor ] [-i interpolation] infile1 infile2 infile3 infile4 infile5 infile6 outfile
+USAGE: cube2sphericalpano [-d dimensions] [-t tilesize] [-b bcolor ] [-i interpolation] infile outfile
+USAGE: cube2sphericalpano [-h or -help]
+
+-d ... dimensions ...... dimensions of the output panorama; WxH; integers>0;
+........................ default=1000x500
+-t ... tilesize ........ size of square face tiles in optional single montage image;
+........................ default will be computed from the montage input image
+........................ dimensions; provided only to override erroneous fractional
+........................ dimensions computed from the montage image
+-b ... bgcolor ......... background color for virtual pixels; any valid IM color is
+........................ allowed; default=black
+-i ... interpolation ... intepolation method; any valid IM interpolation method is
+........................ allowed; default=bilinear
+
+PURPOSE: To transform 6 cube face images into a spherical panorama image.
+DESCRIPTION: CUBE2SPHERICALPANO transforms either 1) six cube face images in order of left, front, right, back, over, under into a spherical panorama or 2) one montage of the six cube face images into a spherical panorama. The over and under images must be as if facing forward and turning up and down, respectively. If not in that orientation, then you must rotate them 90, 180, 270 as needed to orient them as needed.
+
+ARGUMENTS:
+
+-d dimensions ... DIMENSIONS of the output panorama as WxH. Values are integers>0. The default=1000x500.
+-t tilesize ... TILESIZE is the size of the square face tile in the optional single montage input image. The default will be computed from the montage input image dimensions as tile_width=montage_width/4 and tile_height=montage_height/3. This is provided only to override erroneous rounding of any fractional pixel dimensions computed from the montage image.
+-b bgcolor ... BGCOLOR is the background color for virtual pixels. Any valid IM color is allowed. The default=black.
+-i interpolation ... INTEPOLATION method. Any valid IM interpolation method is allowed. The default=bilinear.
+
+NOTE: This script will be slow due to the use of -fx. On my dual core INTEL Mac mini with 2.8 GHz processor and OSX Sierra, it takes 1 min 40 sec to create a 1000x500 pixel spherical panorama from six 500x500 pixel cube face images. Time will increase/decrease approximately by the square of the panorama dimensions.
+References: https://en.wikipedia.org/wiki/Cube_mapping http://paulbourke.net//miscellaneous/cubemaps/ https://stackoverflow.com/questions/29678510/convert-21-equirectangular-panorama-to-cube-map http://mathworld.wolfram.com/SphericalCoordinates.html
+CAVEAT: No guarantee that this script will work on all platforms, nor that trapping of inconsistent parameters is complete and foolproof. Use At Your Own Risk."
+
 usage1() 
 	{
-	echo >&2 ""
-	echo >&2 "$PROGNAME:" "$@"
-	sed >&2 -e '1,/^####/d;  /^###/g;  /^#/!q;  s/^#//;  s/^ //;  4,$p' "$PROGDIR/$PROGNAME"
+	echo >&2 "$usage_msg"
+	# echo >&2 "$PROGNAME:" "$@"
+	# sed >&2 -e '1,/^####/d;  /^###/g;  /^#/!q;  s/^#//;  s/^ //;  4,$p' "$PROGDIR/$PROGNAME"
 	}
+
 usage2() 
 	{
-	echo >&2 ""
-	echo >&2 "$PROGNAME:" "$@"
-	sed >&2 -e '1,/^####/d;  /^######/g;  /^#/!q;  s/^#*//;  s/^ //;  4,$p' "$PROGDIR/$PROGNAME"
+	echo >&2 "$usage_msg"
+	# echo >&2 "$PROGNAME:" "$@"
+	# sed >&2 -e '1,/^####/d;  /^######/g;  /^#/!q;  s/^#*//;  s/^ //;  4,$p' "$PROGDIR/$PROGNAME"
 	}
 
 # function to report error messages
 errMsg()
 	{
-	echo ""
+	# echo ""
 	echo $1
-	echo ""
+	# echo ""
 	usage1
 	exit 1
 	}
@@ -141,7 +173,7 @@ checkMinus()
 if [ $# -eq 0 ]
 	then
 	# help information
-	echo ""
+	# echo ""
 	usage2
 	exit 0
 elif [ $# -gt 15 ]
@@ -153,7 +185,7 @@ else
 		# get parameters
 		case "$1" in
 	  -h|-help)    # help information
-				   echo ""
+				#    echo ""
 				   usage2
 				   ;;
 			-d)    # dimensions
