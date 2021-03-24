@@ -58,8 +58,8 @@ Simulator::Simulator() :width(320),
                         minElevation(-0.94),
                         maxElevation(0.94),
                         frames(0),
-                        navGraphPath("./connectivity"),
-                        datasetPath("./data/v1/scans/"),
+                        navGraphPath("/mnt/ssd/gaoshang/Matterport3DSimulator/connectivity"),
+                        datasetPath("/mnt/ssd/gaoshang/Matterport3DSimulator/data/v1/scans/"),
 #ifdef OSMESA_RENDERING
                         buffer(NULL),
 #endif
@@ -130,13 +130,13 @@ void Simulator::setRestrictedNavigation(bool value) {
 void Simulator::setPreloadingEnabled(bool value) {
      if (!initialized) {
         preloadImages = value;
-    } 
+    }
 }
 
 void Simulator::setDepthEnabled(bool value) {
      if (!initialized) {
         renderDepth = value;
-    } 
+    }
 }
 
 void Simulator::setBatchSize(unsigned int size) {
@@ -301,7 +301,7 @@ void Simulator::initialize() {
         ModelViewMat = glGetUniformLocation(glProgram, "ModelViewMat");
         ProjMat = glGetUniformLocation(glProgram, "ProjMat");
         vertex = glGetAttribLocation(glProgram, "vertex");
-        // If isDepth, the fragment shader converts Euclidean depth values (distance from camera 
+        // If isDepth, the fragment shader converts Euclidean depth values (distance from camera
         // centre) back to perpendicular distance from camera plane.
         isDepth = glGetUniformLocation(glProgram, "isDepth");
 
@@ -322,7 +322,7 @@ void Simulator::initialize() {
         if (preloadImages) {
             // trigger loading from disk now, to get predictable timing later
             preloadTimer.Start();
-            auto& navGraph = NavGraph::getInstance(navGraphPath, datasetPath, preloadImages, 
+            auto& navGraph = NavGraph::getInstance(navGraphPath, datasetPath, preloadImages,
                               renderDepth, randomSeed, cacheSize);
             preloadTimer.Stop();
         }
@@ -338,7 +338,7 @@ void Simulator::populateNavigable() {
         double adjustedheading = M_PI/2.0 - state->heading;
         glm::vec3 camera_horizon_dir(cos(adjustedheading), sin(adjustedheading), 0.f);
         double cos_half_hfov = cos(vfov * width / height / 2.0);
-        
+
         auto& navGraph = NavGraph::getInstance(navGraphPath, datasetPath, preloadImages, renderDepth, randomSeed, cacheSize);
         for (unsigned int i : navGraph.adjacentViewpointIndices(state->scanId, idx)) {
             // Check if visible between camera left and camera right
@@ -414,9 +414,9 @@ void Simulator::newEpisode(const std::vector<std::string>& scanId,
         unsigned int ix = navGraph.index(state->scanId, viewpointId.at(i));
         glm::vec3 pos = navGraph.cameraPosition(state->scanId, ix);
         Viewpoint v {
-            viewpointId.at(i), 
+            viewpointId.at(i),
             ix,
-            pos[0], pos[1], pos[2], 
+            pos[0], pos[1], pos[2],
             0.0, 0.0, 0.0
         };
         state->location = std::make_shared<Viewpoint>(v);
@@ -498,7 +498,7 @@ void Simulator::renderScene() {
     }
 }
 
-void Simulator::makeAction(const std::vector<unsigned int>& index, const std::vector<double>& heading, 
+void Simulator::makeAction(const std::vector<unsigned int>& index, const std::vector<double>& heading,
                         const std::vector<double>& elevation) {
     processTimer.Start();
     if (!initialized){
