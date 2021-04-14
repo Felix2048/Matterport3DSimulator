@@ -2,9 +2,6 @@ from MatterSim import Simulator
 
 class SimulatorWrapper(Simulator):
 
-    def __init__(self):
-        super(Simulator, self).__init__()
-
     def init(self):
         super(Simulator, self).initialize()
 
