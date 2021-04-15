@@ -8,7 +8,7 @@ class SimulatorWrapper(Simulator):
     def newEpisode(self, scanId, viewpointId, heading, elevation):
         super(SimulatorWrapper, self).newEpisode([scanId], [viewpointId], [heading], [elevation])
 
-    def getState(self, scanId, viewpointId, heading, elevation):
+    def getState(self):
         return super(SimulatorWrapper, self).getState()[0]
 
     def makeAction(self, index, heading, elevation):
